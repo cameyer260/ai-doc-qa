@@ -14,6 +14,7 @@ type PineconeMatch = {
 export const runtime = "nodejs";
 
 const Body = z.object({
+  userId: z.string().min(1),
   question: z.string().min(3),
   docId: z.string().optional(),
   topK: z.number().min(1).max(10).optional(),
@@ -22,8 +23,7 @@ const Body = z.object({
 export async function POST(req: NextRequest) {
   try {
     const parsed = Body.parse(await req.json());
-    const question = parsed.question;
-    const docId = parsed.docId;
+    const { question, userId, docId } = parsed;
     // defensively clamp topK in case future callers pass something wild
     const topK = Math.min(Math.max(parsed.topK ?? 6, 1), 10);
 
@@ -36,11 +36,15 @@ export async function POST(req: NextRequest) {
 
     // 2) vector search
     const pineconeIndex = await getPineconeIndex();
+    const filter: any = { userId: { $eq: userId } };
+    if (docId) {
+      filter.docId = { $eq: docId };
+    }
     const results = await pineconeIndex.query({
       vector,
       topK,
       includeMetadata: true,
-      filter: docId ? { docId: { $eq: docId } } : undefined,
+      filter,
     });
 
     // 3) build contexts

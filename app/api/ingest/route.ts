@@ -7,9 +7,13 @@ import { openai, EMBEDDING_MODEL } from "@/lib/openai";
 
 export const runtime = "nodejs";
 
-const BodySchema = z.object({ docId: z.string().min(1) });
+const BodySchema = z.object({
+  userId: z.string().min(1),
+  docId: z.string().min(1),
+  token: z.string().min(1),
+});
 
-type Meta = { docId: string; chunkIndex: number; snippet: string };
+type Meta = { userId: string; docId: string; chunkIndex: number; snippet: string };
 type PCVector = { id: string; values: number[]; metadata: Meta };
 
 export async function POST(req: NextRequest) {
@@ -21,11 +25,25 @@ export async function POST(req: NextRequest) {
 
     const form = await req.formData();
     const parsed = BodySchema.safeParse({
+      userId: String(form.get("userId") ?? ""),
       docId: String(form.get("docId") ?? ""),
+      token: String(form.get("token") ?? ""),
     });
-    if (!parsed.success)
-      return new Response("Missing or invalid docId", { status: 400 });
-    const { docId } = parsed.data;
+    if (!parsed.success) {
+      return new Response("Missing or invalid form data", { status: 400 });
+    }
+    const { userId, docId, token } = parsed.data;
+
+    // Verify reCAPTCHA
+    const recaptchaRes = await fetch("https://www.google.com/recaptcha/api/siteverify", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${token}`,
+    });
+    const recaptchaJson = await recaptchaRes.json();
+    if (!recaptchaJson.success) {
+      return new Response("reCAPTCHA verification failed", { status: 400 });
+    }
 
     const fileEntry = form.get("file");
     if (!fileEntry || !(fileEntry instanceof File)) {
@@ -56,7 +74,7 @@ export async function POST(req: NextRequest) {
         vectors.push({
           id: `${docId}::${globalIdx}`,
           values: e.embedding,
-          metadata: { docId, chunkIndex: globalIdx, snippet },
+          metadata: { userId, docId, chunkIndex: globalIdx, snippet },
         });
       });
     }

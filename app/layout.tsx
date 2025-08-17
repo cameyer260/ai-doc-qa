@@ -1,3 +1,4 @@
+import { Providers } from "@/components/Providers";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -21,17 +22,19 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body className="min-h-screen antialiased">
-        <div className="mx-auto max-w-3xl p-6">
-          <header className="mb-6 flex items-center justify-between">
-            <h1 className="text-2xl font-semibold">Doc Q&A (RAG)</h1>
-            <nav className="flex gap-4 text-sm">
-              <a className="underline" href="/">Home</a>
-              <a className="underline" href="/upload">Upload</a>
-              <a className="underline" href="/ask">Ask</a>
-            </nav>
-          </header>
-          {children}
-        </div>
+        <Providers>
+          <div className="mx-auto max-w-3xl p-6">
+            <header className="mb-6 flex items-center justify-between">
+              <h1 className="text-2xl font-semibold">Doc Q&A (RAG)</h1>
+              <nav className="flex gap-4 text-sm">
+                <a className="underline" href="/">Home</a>
+                <a className="underline" href="/upload">Upload</a>
+                <a className="underline" href="/ask">Ask</a>
+              </nav>
+            </header>
+            {children}
+          </div>
+        </Providers>
       </body>
     </html>
   );

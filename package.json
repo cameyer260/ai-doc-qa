@@ -11,12 +11,16 @@
   "dependencies": {
     "@dqbd/tiktoken": "^1.0.22",
     "@pinecone-database/pinecone": "^2.2.2",
+    "@upstash/ratelimit": "^2.0.6",
+    "@upstash/redis": "^1.35.3",
     "next": "15.4.6",
     "openai": "^5.12.2",
     "pdf-parse": "^1.1.1",
     "pdfjs-dist": "^5.4.54",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-google-recaptcha-v3": "^1.11.0",
+    "uuid": "^11.1.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {
@@ -26,6 +30,7 @@
     "@types/pdf-parse": "^1.1.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/uuid": "^10.0.0",
     "eslint": "^9",
     "eslint-config-next": "15.4.6",
     "tailwindcss": "^4",

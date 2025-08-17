@@ -1,19 +1,38 @@
-import type { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 
-const hits = new Map<string, { count: number; ts: number }>();
-const WINDOW_MS = 10_000; // 10s
-const MAX = 15; // 15 req/10s per IP
+// You will need to create an Upstash Redis database and get the following environment variables:
+// UPSTASH_REDIS_REST_URL
+// UPSTASH_REDIS_REST_TOKEN
+// These are available on the Upstash console: https://console.upstash.com/redis
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+});
 
-export function middleware(req: NextRequest) {
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "local";
-  const now = Date.now();
-  const entry = hits.get(ip) ?? { count: 0, ts: now };
-  if (now - entry.ts > WINDOW_MS) { entry.count = 0; entry.ts = now; }
-  entry.count += 1; hits.set(ip, entry);
-  if (entry.count > MAX) {
-    return new Response("Too many requests", { status: 429 });
+const ratelimit = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.slidingWindow(10, "10 s"), // 10 requests per 10 seconds
+  analytics: true,
+});
+
+export async function middleware(request: NextRequest) {
+  const ip = request.ip ?? "127.0.0.1";
+  const { success, pending, limit, reset, remaining } = await ratelimit.limit(ip);
+
+  if (!success) {
+    return new Response("Too many requests.", {
+      status: 429,
+      headers: {
+        "X-RateLimit-Limit": limit.toString(),
+        "X-RateLimit-Remaining": remaining.toString(),
+        "X-RateLimit-Reset": reset.toString(),
+      },
+    });
   }
-  return;
+
+  return NextResponse.next();
 }
 
 export const config = { matcher: ["/api/:path*"] };
