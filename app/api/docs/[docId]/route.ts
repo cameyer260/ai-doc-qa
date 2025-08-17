@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getPineconeIndex } from "@/lib/pinecone";
 
@@ -10,16 +10,15 @@ const BodySchema = z.object({
 
 export async function DELETE(
   req: NextRequest,
-  context: { params: { docId: string } },
+  { params }: { params: Promise<{ docId: string }> },
 ) {
   try {
-    const { params } = context;
     const parsed = BodySchema.safeParse(await req.json());
     if (!parsed.success) {
       return new Response("Missing or invalid userId", { status: 400 });
     }
     const { userId } = parsed.data;
-    const { docId } = params;
+    const { docId } = await params;
 
     const pineconeIndex = await getPineconeIndex();
 
@@ -38,7 +37,7 @@ export async function DELETE(
       await pineconeIndex.deleteMany(vectorIds);
     }
 
-    return Response.json({ ok: true, deletedCount: vectorIds.length });
+    return NextResponse.json({ ok: true, deletedCount: vectorIds.length });
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : String(e);
     return new Response(`Delete error: ${message}`, { status: 500 });
