@@ -10,9 +10,10 @@ const BodySchema = z.object({
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { docId: string } },
+  context: { params: { docId: string } },
 ) {
   try {
+    const { params } = context;
     const parsed = BodySchema.safeParse(await req.json());
     if (!parsed.success) {
       return new Response("Missing or invalid userId", { status: 400 });
