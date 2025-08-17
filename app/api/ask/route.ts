@@ -36,7 +36,10 @@ export async function POST(req: NextRequest) {
 
     // 2) vector search
     const pineconeIndex = await getPineconeIndex();
-    const filter: any = { userId: { $eq: userId } };
+    const filter: {
+      userId: { $eq: string };
+      docId?: { $eq: string };
+    } = { userId: { $eq: userId } };
     if (docId) {
       filter.docId = { $eq: docId };
     }

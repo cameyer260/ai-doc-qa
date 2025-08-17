@@ -1,6 +1,7 @@
 import { Providers } from "@/components/Providers";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Link from "next/link";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -20,16 +21,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body className="min-h-screen antialiased">
         <Providers>
           <div className="mx-auto max-w-3xl p-6">
             <header className="mb-6 flex items-center justify-between">
               <h1 className="text-2xl font-semibold">Doc Q&A (RAG)</h1>
               <nav className="flex gap-4 text-sm">
-                <a className="underline" href="/">Home</a>
-                <a className="underline" href="/upload">Upload</a>
-                <a className="underline" href="/ask">Ask</a>
+                <Link className="underline" href="/">Home</Link>
+                <Link className="underline" href="/upload">Upload</Link>
+                <Link className="underline" href="/ask">Ask</Link>
               </nav>
             </header>
             {children}

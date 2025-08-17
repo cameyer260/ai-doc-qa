@@ -1,13 +1,14 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getUserId } from "@/lib/user";
+import Link from "next/link";
 
 export default function DocList() {
   const [userId, setUserId] = useState<string>("");
   const [docIds, setDocIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
-  async function fetchDocs() {
+  const fetchDocs = useCallback(async () => {
     if (!userId) return;
     setLoading(true);
     const res = await fetch(`/api/docs?userId=${userId}`);
@@ -16,7 +17,7 @@ export default function DocList() {
       setDocIds(data.docIds);
     }
     setLoading(false);
-  }
+  }, [userId]);
 
   useEffect(() => {
     const id = getUserId();
@@ -25,7 +26,7 @@ export default function DocList() {
 
   useEffect(() => {
     fetchDocs();
-  }, [userId]);
+  }, [userId, fetchDocs]);
 
   function copyToClipboard(text: string) {
     navigator.clipboard.writeText(text);
@@ -52,10 +53,10 @@ export default function DocList() {
       <div className="space-y-2 text-center">
         <h3 className="text-lg font-semibold">No Documents Found</h3>
         <p className="text-sm opacity-70">
-          You haven't uploaded any documents yet. Go to the{" "}
-          <a href="/upload" className="text-blue-500 hover:underline">
+          You haven&apos;t uploaded any documents yet. Go to the{" "}
+          <Link href="/upload" className="text-blue-500 hover:underline">
             Upload Page
-          </a>{" "}
+          </Link>{" "}
           to get started.
         </p>
       </div>
