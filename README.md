@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+📄 DocuQuery
 
-## Getting Started
+AI-powered document Q&A app where users upload files and instantly query their contents using vector search.
 
-First, run the development server:
 
-```bash
+
+
+🚀 Features
+
+📂 Upload documents (PDF, TXT, etc.) through a simple UI.
+
+🤖 Query with AI — ask natural language questions about your documents.
+
+📊 Vector Search with Pinecone for fast, semantic retrieval.
+
+⚡ Rate-limiting with Upstash Redis to prevent abuse.
+
+🔒 Per-user document storage to keep data isolated.
+
+🌐 Deployed on Vercel with serverless API routes.
+
+🛠 Tech Stack
+
+Framework: Next.js 15
+
+AI/LLM: OpenAI API
+
+Vector Database: Pinecone
+
+Database / Ratelimiting: Upstash Redis
+
+Deployment: Vercel
+
+⚙️ Setup
+1. Clone the repo
+git clone https://github.com/cameyer260/ai-doc-qa.git
+cd ai-doc-qa
+
+2. Install dependencies
+npm install
+
+3. Configure environment variables
+
+Create a .env.local file in the root with the following:
+
+OPENAI_API_KEY=your_openai_key
+PINECONE_API_KEY=your_pinecone_key
+PINECONE_ENVIRONMENT=your_pinecone_env
+PINECONE_INDEX=your_pinecone_index
+UPSTASH_REDIS_REST_URL=your_upstash_url
+UPSTASH_REDIS_REST_TOKEN=your_upstash_token
+
+4. Run the dev server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Now open http://localhost:3000.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+📦 Deployment
 
-## Learn More
+This app is designed for Vercel.
 
-To learn more about Next.js, take a look at the following resources:
+Push your repo to GitHub.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Connect it on Vercel.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Add all environment variables under Project Settings → Environment Variables.
 
-## Deploy on Vercel
+🔮 Roadmap
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+ Support for more file types (Word, Excel, Markdown).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+ Authentication (user accounts).
+
+ Multi-document querying.
+
+ Better document previews and summaries.
+
+🤝 Contributing
+
+PRs and issues are welcome! Please open a discussion if you have an idea for a major feature.
+
+📜 License
+
+MIT License © 2025 Christopher Meyer
+
+👉 Live Demo: docuquery.online
